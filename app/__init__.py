@@ -1,14 +1,28 @@
 from flask import Flask
+from os import path, makedirs
+from .extensions import db
 
 def create_app():
     app = Flask(__name__)
 
-    app.config['SECRET_KEY'] = "MY_FL@sk_App_Here"
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///database.db"
-    app.config['UPLOAD_FOLDER'] = 'uploads'
+    UPLOAD_FOLDER = 'uploads'
+    if not path.exists(UPLOAD_FOLDER):
+        makedirs(UPLOAD_FOLDER)
 
-    @app.route("/hello")
-    def hello():
-        return "hellow world"
-    
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
+    app.config['SECRET_KEY'] = "robel123robel123"
+    app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+    db.init_app(app)
+
+    if not path.exists('instance/database.db'):
+        create_db(app)
+        print("DATABASE CREATED")
+
     return app
+
+def create_db(app):
+    from .models import Users, Tags, Posts, Tagged_items
+    with app.app_context():
+        db.create_all()
+
+app = create_app()
