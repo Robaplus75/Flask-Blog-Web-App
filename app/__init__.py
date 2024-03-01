@@ -17,6 +17,9 @@ def create_app():
     if not path.exists('instance/database.db'):
         create_db(app)
         print("DATABASE CREATED")
+    
+    from app.views.user import bp as user_bp
+    app.register_blueprint(user_bp)
 
     return app
 
